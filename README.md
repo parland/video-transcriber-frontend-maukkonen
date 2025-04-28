@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 Video Transcriber Frontend
 
-## Getting Started
+This is the frontend interface for the Video Transcription Application, built with [Next.js](https://nextjs.org) and [Tailwind CSS](https://tailwindcss.com/). It allows users to interact with the [backend service](../video-transcriber-backend-maukkonen/README.md) to upload videos, monitor transcription progress, edit the generated subtitles, and download the results.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-   **Video Upload**: Interface to select and upload video files (MP4, MOV, etc.).
+-   **Language Selection**: Dropdown to select the spoken language in the video (currently supports Auto-Detect, English, Swedish in the UI) or choose the Whisper model size.
+-   **Transcription Monitoring**: Displays real-time progress and status messages from the backend during transcription.
+-   **Subtitle Editor**: Allows in-browser editing of the transcribed subtitle text and timings (though timing edits are not currently implemented).
+-   **SRT Download**: Button to download the final (edited) subtitles in `.srt` format.
+-   **System Information**: Displays detected GPU information and the recommended/available Whisper models fetched from the backend.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+-   [Next.js](https://nextjs.org/) (using Pages Router)
+-   [React](https://reactjs.org/)
+-   [Tailwind CSS](https://tailwindcss.com/)
+-   [axios](https://axios-http.com/) (for API requests, though current implementation uses `fetch`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Getting Started (Local Development)
 
-## Learn More
+While the primary deployment method is Docker (see `video-transcriber-service/README.md`), you can run the frontend locally for development, assuming the backend service is also running (either locally or in Docker).
 
-To learn more about Next.js, take a look at the following resources:
+1.  **Prerequisites**:
+    -   Node.js (v18 or later recommended) and npm/yarn/pnpm.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2.  **Clone the repository** (if you haven't already):
+    ```bash
+    # If you haven't already cloned the parent project
+    git clone https://github.com/parland/lecture-transcriber-maukkonen.git
+    cd lecture-transcriber-maukkonen/video-transcriber-frontend-maukkonen
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3.  **Install Dependencies**:
+    ```bash
+    npm install
+    # or
+    # yarn install
+    # or
+    # pnpm install
+    ```
 
-## Deploy on Vercel
+4.  **Configure Backend API URL**:
+    The frontend needs to know where the backend API is running. It attempts to connect to `http://<current_hostname>:8765/api` by default when run in a browser. For local development where the backend might be on `localhost:8765`, you might need to set an environment variable. Create a `.env.local` file in this directory (`video-transcriber-frontend-maukkonen`):
+    ```.env.local
+    NEXT_PUBLIC_API_URL=http://localhost:8765/api
+    ```
+    *(Adjust the URL if your backend runs elsewhere)*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5.  **Run the Development Server**:
+    ```bash
+    npm run dev
+    # or
+    # yarn dev
+    # or
+    # pnpm dev
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6.  **Open the Application**:
+    Open [http://localhost:3000](http://localhost:3000) (or the port specified by Next.js) in your browser.
+
+## Key Components
+
+-   **`pages/index.js`**: The main page component containing the UI for upload, status display, and subtitle editing.
+-   **`pages/_app.js`**: Custom App component, used for global styles.
+-   **`styles/globals.css`**: Global CSS styles, including Tailwind directives.
+-   **`tailwind.config.js`**: Tailwind CSS configuration.
+-   **`public/`**: Static assets.
+
+## Environment Variables
+
+-   `NEXT_PUBLIC_API_URL`: The base URL for the backend API service. If not set, the frontend tries to infer it based on the current hostname and the default backend port (8765).
+
+## Docker Build
+
+The `Dockerfile` in this directory defines how to build the frontend service image. It installs dependencies and runs the Next.js development server (`npm run dev`). This image is typically used within the combined Docker setup managed by the `video-transcriber-service`.
